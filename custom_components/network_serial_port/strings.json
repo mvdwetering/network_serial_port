@@ -2,20 +2,20 @@
   "config": {
     "step": {
       "user": {
+        "description": "Serial port can be a normal path or any [URL handler as supported by PySerial](https://pyserial.readthedocs.io/en/latest/url_handlers.html).\n\nThis can come in handy when addressing USB adapters by serial with `hwgrep://` or use `rfc2217://hostname_or_ip` to connect through an rfc2217 compatible server.",
         "data": {
-          "host": "[%key:common::config_flow::data::host%]",
-          "username": "[%key:common::config_flow::data::username%]",
-          "password": "[%key:common::config_flow::data::password%]"
+          "serial_url": "Serial port",
+          "baudrate": "Baudrate",
+          "tcp_port": "TCP port to listen on"
         }
       }
     },
     "error": {
-      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-      "unknown": "[%key:common::config_flow::error::unknown%]"
+      "cannot_connect": "Cannot open serial URL or TCP port",
+      "unknown": "Unknown error"
     },
     "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+      "already_configured": "Device is already configured"
     }
   }
 }
