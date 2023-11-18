@@ -41,7 +41,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     await network_serial_process.stop()
 
     # Return info that you want to store in the config entry.
-    return {"title": data["serial_url"]}
+    return {"title": f"{data['serial_url']} @ port {data['tcp_port']}"}
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
