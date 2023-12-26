@@ -52,7 +52,7 @@ class NetworkSerialProcess:
         ]
 
         self._process = await asyncio.create_subprocess_exec(
-            *args, stdout=asyncio.subprocess.PIPE
+            *args
         )
 
     async def stop(self):
