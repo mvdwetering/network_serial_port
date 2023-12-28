@@ -17,5 +17,17 @@
     "abort": {
       "already_configured": "Device is already configured"
     }
+  },
+  "entity": {
+    "binary_sensor": {
+      "client_connected": {
+        "name": "Client connection"
+      }
+    },
+    "sensor": {
+      "connected_client": {
+        "name": "Client"
+      }
+    }
   }
 }

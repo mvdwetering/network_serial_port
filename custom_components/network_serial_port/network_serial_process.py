@@ -3,6 +3,8 @@
 import asyncio
 from dataclasses import dataclass
 import pathlib
+import re
+from typing import Callable
 
 from .const import CONF_BAUDRATE, CONF_SERIAL_URL, CONF_TCP_PORT, LOGGER
 
@@ -34,8 +36,13 @@ class NetworkSerialPortConfiguration:
 
 
 class NetworkSerialProcess:
-    def __init__(self, configuration: NetworkSerialPortConfiguration) -> None:
+
+    _connected_regex = re.compile(r"Connected by \('(?P<client_ip>[^']*)',")
+
+    def __init__(self, configuration: NetworkSerialPortConfiguration, on_connection_change:Callable[[], None]|None=None) -> None:
         self._configuration = configuration
+        self.connected_client:str|None = None
+        self.on_connection_change = on_connection_change
 
     @property
     def is_running(self) -> bool:
@@ -69,6 +76,7 @@ class NetworkSerialProcess:
                 line = await self._process.stderr.readline()
                 if line.endswith(b'\n'):
                     LOGGER.info(line)
+                    self._parse_line(line)
                 else:
                     LOGGER.debug("EOF detected")
                     return
@@ -77,3 +85,18 @@ class NetworkSerialProcess:
             except asyncio.CancelledError as e:
                 # Cleanup when cancelling should go here
                 raise asyncio.CancelledError from e
+
+    def _parse_line(self, input:bytes):
+        changed = True
+
+        line = input.decode("utf-8")
+        if line.startswith("Disconnected"):
+            self.connected_client = None
+        elif m := self._connected_regex.match(line):
+            self.connected_client = m.group("client_ip")
+        else:
+            changed = False
+
+        LOGGER.debug("changed: %s, client %s", changed, self.connected_client)
+        if changed and self.on_connection_change:
+            self.on_connection_change()
