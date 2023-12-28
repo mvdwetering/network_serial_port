@@ -4,7 +4,7 @@ import asyncio
 from dataclasses import dataclass
 import pathlib
 
-from .const import CONF_BAUDRATE, CONF_SERIAL_URL, CONF_TCP_PORT
+from .const import CONF_BAUDRATE, CONF_SERIAL_URL, CONF_TCP_PORT, LOGGER
 
 import serial
 
@@ -52,9 +52,28 @@ class NetworkSerialProcess:
         ]
 
         self._process = await asyncio.create_subprocess_exec(
-            *args
+            *args, stderr=asyncio.subprocess.PIPE
         )
+
+        self._reader_task = asyncio.create_task(self._process_stderr_output(), name="TCP Serial Redirect stderr reader")
 
     async def stop(self):
         self._process.terminate()
         await self._process.wait()
+
+    async def _process_stderr_output(self):
+        assert self._process.stderr is not None
+
+        while True:
+            try:
+                line = await self._process.stderr.readline()
+                if line.endswith(b'\n'):
+                    LOGGER.info(line)
+                else:
+                    LOGGER.debug("EOF detected")
+                    return
+            except ValueError:
+                LOGGER.debug("ValueError, limit was reached", exc_info=True)
+            except asyncio.CancelledError as e:
+                # Cleanup when cancelling should go here
+                raise asyncio.CancelledError from e
