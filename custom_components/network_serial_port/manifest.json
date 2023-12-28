@@ -8,6 +8,7 @@
   "dependencies": [],
   "documentation": "https://github.com/mvdwetering/network_serial_port",
   "homekit": {},
+  "integration_type": "device",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/mvdwetering/network_serial_port/issues",
   "requirements": [
