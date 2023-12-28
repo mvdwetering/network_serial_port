@@ -21,7 +21,7 @@ class NetworkSerialPortEntitySensorDescription(SensorEntityDescription):
 ENTITY_DESCRIPTIONS = [
     NetworkSerialPortEntitySensorDescription(  # type: ignore
         key="connected_client",  # type: ignore
-        icon="mdi:connection",  # type: ignore
+        icon="mdi:lan-connect",  # type: ignore
         get_value=lambda api: api.connected_client if api.connected_client else "",
     ),
 ]
