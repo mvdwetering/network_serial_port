@@ -15,6 +15,3 @@ Some possible useful future additions. Just to manage expectations, this is just
 * Make more settings available in config flow, e.g. byte size, parity, flow control etc...
 * Make settings configurable through integration options. E.g. port number
 * During configflow show available/detected serial ports with enough info to build a `hwgrep` regex
-* Route output from `tcp_serial_redirect.py` to Home Assistant so it can be logged (stdout and stderr?)
-* Add entity to indicate a client is connected (requires parsing output of the process)
-* Sensor entity that indicates current port?
