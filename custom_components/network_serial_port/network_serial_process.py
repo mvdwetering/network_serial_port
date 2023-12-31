@@ -52,6 +52,7 @@ class NetworkSerialProcess:
         path = pathlib.Path(__file__).parent.resolve()
 
         args = [
+            "python3",
             f"{path}/tcp_serial_redirect.py",
             self._configuration.url,
             str(self._configuration.baudrate),
