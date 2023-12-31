@@ -8,7 +8,7 @@ from typing import Callable
 
 from .const import CONF_BAUDRATE, CONF_SERIAL_URL, CONF_TCP_PORT, LOGGER
 
-import serial
+import serial  # type: ignore
 
 
 @dataclass

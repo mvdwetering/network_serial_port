@@ -8,8 +8,8 @@
 
 import sys
 import socket
-import serial
-import serial.threaded
+import serial  # type: ignore
+import serial.threaded  # type: ignore
 import time
 
 

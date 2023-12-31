@@ -5,7 +5,7 @@ import asyncio
 import logging
 from typing import Any
 
-import voluptuous as vol
+import voluptuous as vol  # type: ignore
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
