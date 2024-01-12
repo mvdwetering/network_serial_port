@@ -5,6 +5,7 @@ import asyncio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry
 
 from .coordinator import NetworkSerialPortCoordinator
@@ -25,7 +26,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await network_serial_process.start()
     await asyncio.sleep(2)
     if not network_serial_process.is_running:
-        return False
+        raise ConfigEntryNotReady
 
     coordinator = NetworkSerialPortCoordinator(hass, network_serial_process)
 
