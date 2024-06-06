@@ -33,7 +33,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     def on_connection_change():
         coordinator.async_set_updated_data(network_serial_process)
 
+    async def on_process_lost():
+        await hass.config_entries.async_reload(entry.entry_id)
+
     network_serial_process.on_connection_change = on_connection_change
+    network_serial_process.on_process_lost = on_process_lost
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 

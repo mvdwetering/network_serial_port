@@ -4,7 +4,7 @@ import asyncio
 from dataclasses import dataclass
 import pathlib
 import re
-from typing import Callable
+from typing import Awaitable, Callable
 
 from .const import CONF_BAUDRATE, CONF_SERIAL_URL, CONF_TCP_PORT, LOGGER
 
@@ -39,10 +39,11 @@ class NetworkSerialProcess:
 
     _connected_regex = re.compile(r"Connected by \('(?P<client_ip>[^']*)',")
 
-    def __init__(self, configuration: NetworkSerialPortConfiguration, on_connection_change:Callable[[], None]|None=None) -> None:
+    def __init__(self, configuration: NetworkSerialPortConfiguration, on_connection_change:Callable[[], None]|None=None, on_process_lost:Callable[[], Awaitable[None]]|None=None) -> None:
         self._configuration = configuration
         self.connected_client:str|None = None
         self.on_connection_change = on_connection_change
+        self.on_process_lost = on_process_lost
 
     @property
     def is_running(self) -> bool:
@@ -79,13 +80,20 @@ class NetworkSerialProcess:
                     LOGGER.info(line)
                     self._parse_line(line)
                 else:
-                    LOGGER.debug("EOF detected")
+                    LOGGER.error("EOF detected")
+                    if self.on_process_lost:
+                        await self.on_process_lost()
                     return
             except ValueError:
-                LOGGER.debug("ValueError, limit was reached", exc_info=True)
+                LOGGER.error("ValueError, limit was reached", exc_info=True)
             except asyncio.CancelledError as e:
                 # Cleanup when cancelling should go here
+                LOGGER.error("asyncio.CancelledError", exc_info=True)
                 raise asyncio.CancelledError from e
+            except Exception as e:
+                LOGGER.exception(e)
+                if self.on_process_lost:
+                    await self.on_process_lost()
 
     def _parse_line(self, input:bytes):
         changed = True
