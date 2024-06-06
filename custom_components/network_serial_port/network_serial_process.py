@@ -81,9 +81,11 @@ class NetworkSerialProcess:
                     self._parse_line(line)
                 else:
                     LOGGER.error("EOF detected")
-                    if self.on_process_lost:
-                        await self.on_process_lost()
-                    return
+                    print(line)
+                    # if self.on_process_lost:
+                    #     await self.on_process_lost()
+                    # return
+                    continue
             except ValueError:
                 LOGGER.error("ValueError, limit was reached", exc_info=True)
             except asyncio.CancelledError as e:
