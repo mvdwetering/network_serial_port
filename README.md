@@ -1,5 +1,9 @@
 # Network serial port
 
+> **NOTE**
+> As an FYI I was trying to run this on an old Raspberry Pi 3 with Home Assistant OS and it ended up being unstable (random lockups, needing powercycle to restart)
+> I don't think it was this integration because there seemed to be no memory leaking as far as I can tell, but maybe it was.
+
 An integration that exposes a serial port on a tcp port so you can connect to the serial port from the network. Basically like running socat, tcp2ser or any of the other existing solutions except that this is packaged as a Home Assistant integration.
 
 When needing to expose multiple serial ports, just add the integration multiple times.
@@ -15,3 +19,4 @@ Some possible useful future additions. Just to manage expectations, this is just
 * Make more settings available in config flow, e.g. byte size, parity, flow control etc...
 * Make settings configurable through integration options. E.g. port number
 * During configflow show available/detected serial ports with enough info to build a `hwgrep` regex
+* Implement Reconfigure
