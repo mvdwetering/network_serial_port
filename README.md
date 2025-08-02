@@ -15,3 +15,4 @@ Some possible useful future additions. Just to manage expectations, this is just
 * Make more settings available in config flow, e.g. byte size, parity, flow control etc...
 * Make settings configurable through integration options. E.g. port number
 * During configflow show available/detected serial ports with enough info to build a `hwgrep` regex
+* Add reconfigure option to the integration
