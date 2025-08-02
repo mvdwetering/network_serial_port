@@ -91,13 +91,11 @@ class NetworkSerialProcess:
         # Clear the callback because stopping on purpose
         self._on_process_lost = None
 
-        self._process.terminate()
-        await self._process.wait()
-        self._start_success = False
-
-        LOGGER.info(
-            f"Tasks: {self._process_wait_task.done=}, {self._reader_task.done=}"
-        )
+        try:
+            self._process.terminate()
+            await self._process.wait()
+        except ProcessLookupError:
+            LOGGER.debug("Process was already terminated or not found")
 
     async def _wait_for_process_exit(self):
         await self._process.wait()
@@ -145,6 +143,9 @@ class NetworkSerialProcess:
         elif m := self._connected_regex.match(line):
             self.connected_client = m.group("client_ip")
             self._signal_connection_change()
+        elif line.startswith("Exception in thread"):
+            LOGGER.error("Exception in tcp_serial_redirect.py, stopping process")
+            self._process.terminate()
 
     def _signal_connection_change(self):
         if self.on_connection_change:
