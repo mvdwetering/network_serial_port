@@ -1,4 +1,5 @@
 """The Network serial port integration."""
+
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
@@ -15,7 +16,6 @@ from .const import DOMAIN
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR]
 
 
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Network serial port from a config entry."""
 
@@ -24,7 +24,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async def on_process_lost():
         await hass.config_entries.async_reload(entry.entry_id)
 
-    network_serial_process = NetworkSerialProcess(NetworkSerialPortConfiguration.from_dict(dict(entry.data)), on_process_lost=on_process_lost)
+    network_serial_process = NetworkSerialProcess(
+        NetworkSerialPortConfiguration.from_dict(dict(entry.data)),
+        on_process_lost=on_process_lost,
+    )
 
     if not await network_serial_process.start():
         raise ConfigEntryNotReady

@@ -24,7 +24,7 @@ class NetworkSerialPortConfiguration:
     client: str = ""
 
     @staticmethod
-    def from_dict(data:dict):
+    def from_dict(data: dict):
         return NetworkSerialPortConfiguration(
             data[CONF_SERIAL_URL],
             baudrate=data[CONF_BAUDRATE],
@@ -32,15 +32,17 @@ class NetworkSerialPortConfiguration:
         )
 
 
-
 class NetworkSerialProcess:
-
     _connected_regex = re.compile(r"Connected by \('(?P<client_ip>[^']*)',")
 
-
-    def __init__(self, configuration: NetworkSerialPortConfiguration, on_connection_change:Callable[[], None]|None=None, on_process_lost:Callable[[], Awaitable[None]]|None=None) -> None:
+    def __init__(
+        self,
+        configuration: NetworkSerialPortConfiguration,
+        on_connection_change: Callable[[], None] | None = None,
+        on_process_lost: Callable[[], Awaitable[None]] | None = None,
+    ) -> None:
         self._configuration = configuration
-        self.connected_client:str|None = None
+        self.connected_client: str | None = None
         self.on_connection_change = on_connection_change
         self._on_process_lost = on_process_lost
         self._started_event = asyncio.Event()
@@ -66,8 +68,12 @@ class NetworkSerialProcess:
         self._process = await asyncio.create_subprocess_exec(
             *args, stderr=asyncio.subprocess.PIPE
         )
-        self._process_wait_task = asyncio.create_task(self._wait_for_process_exit(), name="TCP Serial Redirect process waiter")
-        self._reader_task = asyncio.create_task(self._process_stderr_output(), name="TCP Serial Redirect stderr reader")
+        self._process_wait_task = asyncio.create_task(
+            self._wait_for_process_exit(), name="TCP Serial Redirect process waiter"
+        )
+        self._reader_task = asyncio.create_task(
+            self._process_stderr_output(), name="TCP Serial Redirect stderr reader"
+        )
 
         # Make sure the process is started properly
         try:
@@ -83,13 +89,15 @@ class NetworkSerialProcess:
 
     async def stop(self):
         # Clear the callback because stopping on purpose
-        self._on_process_lost = None  
+        self._on_process_lost = None
 
         self._process.terminate()
         await self._process.wait()
         self._start_success = False
 
-        LOGGER.info(f"Tasks: {self._process_wait_task.done=}, {self._reader_task.done=}")
+        LOGGER.info(
+            f"Tasks: {self._process_wait_task.done=}, {self._reader_task.done=}"
+        )
 
     async def _wait_for_process_exit(self):
         await self._process.wait()
@@ -103,7 +111,7 @@ class NetworkSerialProcess:
         while True:
             try:
                 line = await self._process.stderr.readline()
-                if line.endswith(b'\n'):
+                if line.endswith(b"\n"):
                     LOGGER.debug(line)
                     self._handle_line(line)
                 else:
@@ -118,7 +126,7 @@ class NetworkSerialProcess:
                 LOGGER.exception(e)
                 return
 
-    def _handle_line(self, input:bytes):
+    def _handle_line(self, input: bytes):
         line = input.decode("utf-8")
 
         # Checks related to process start
@@ -137,7 +145,6 @@ class NetworkSerialProcess:
         elif m := self._connected_regex.match(line):
             self.connected_client = m.group("client_ip")
             self._signal_connection_change()
-
 
     def _signal_connection_change(self):
         if self.on_connection_change:

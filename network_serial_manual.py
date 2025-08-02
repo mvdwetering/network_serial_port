@@ -4,15 +4,19 @@ import argparse
 import asyncio
 import logging
 import sys
-from custom_components.network_serial_port.network_serial_process import NetworkSerialPortConfiguration, NetworkSerialProcess  # type: ignore
-
+from custom_components.network_serial_port.network_serial_process import (
+    NetworkSerialPortConfiguration,
+    NetworkSerialProcess,
+)  # type: ignore
 
 
 def on_connection_change():
     print("on_connection_change callback")
 
+
 async def on_process_lost():
     print("on_process_lost callback.")
+
 
 parser = argparse.ArgumentParser(description="Network Serial Port Process")
 parser.add_argument("serial_url", help="Serial port url")
@@ -35,6 +39,7 @@ config = NetworkSerialPortConfiguration(
     localport=args.port,
 )
 
+
 async def main():
     process = NetworkSerialProcess(
         config,
@@ -55,5 +60,6 @@ async def main():
     except KeyboardInterrupt:
         print("Stopping process...")
         await process.stop()
+
 
 asyncio.run(main())

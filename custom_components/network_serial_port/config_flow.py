@@ -1,4 +1,5 @@
 """Config flow for Network serial port integration."""
+
 from __future__ import annotations
 
 import logging
@@ -11,7 +12,10 @@ from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.exceptions import HomeAssistantError
 
-from custom_components.network_serial_port.network_serial_process import NetworkSerialPortConfiguration, NetworkSerialProcess
+from .network_serial_process import (
+    NetworkSerialPortConfiguration,
+    NetworkSerialProcess,
+)
 
 from .const import CONF_BAUDRATE, CONF_SERIAL_URL, CONF_TCP_PORT, DOMAIN
 
@@ -25,6 +29,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     }
 )
 
+
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """Validate the user input allows us to connect.
 
@@ -32,7 +37,9 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     """
     # validate the data can be used to set up a connection.
 
-    network_serial_process = NetworkSerialProcess(NetworkSerialPortConfiguration.from_dict(data))
+    network_serial_process = NetworkSerialProcess(
+        NetworkSerialPortConfiguration.from_dict(data)
+    )
     if not await network_serial_process.start():
         raise CannotConnect
     await network_serial_process.stop()
@@ -62,9 +69,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
             else:
-                return self.async_create_entry(
-                    title=info["title"], data=user_input
-                )
+                return self.async_create_entry(title=info["title"], data=user_input)
 
         return self.async_show_form(
             step_id="user",

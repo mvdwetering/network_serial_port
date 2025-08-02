@@ -7,6 +7,7 @@ from homeassistant.helpers.update_coordinator import (
 from .const import LOGGER
 from .network_serial_process import NetworkSerialProcess
 
+
 class NetworkSerialPortCoordinator(DataUpdateCoordinator[NetworkSerialProcess]):
     """My custom coordinator."""
 
@@ -19,4 +20,4 @@ class NetworkSerialPortCoordinator(DataUpdateCoordinator[NetworkSerialProcess]):
             name="Network Serial Port",
         )
         self.api = api
-        self.data = api # Can just read data directly from API
+        self.data = api  # Can just read data directly from API

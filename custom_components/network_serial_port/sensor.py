@@ -13,6 +13,7 @@ from .coordinator import NetworkSerialPortCoordinator
 from .const import DOMAIN
 from .network_serial_process import NetworkSerialProcess
 
+
 @dataclass(frozen=True, kw_only=True)
 class NetworkSerialPortEntitySensorDescription(SensorEntityDescription):
     get_value: Callable[[NetworkSerialProcess], str] = None  # type: ignore[assignment]
@@ -33,12 +34,18 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities: list[SensorEntity] = []
 
     for entity_description in ENTITY_DESCRIPTIONS:
-        entities.append(NetworkSerialPortSensor(config_entry.entry_id, coordinator, entity_description))
+        entities.append(
+            NetworkSerialPortSensor(
+                config_entry.entry_id, coordinator, entity_description
+            )
+        )
 
     async_add_entities(entities)
 
 
-class NetworkSerialPortSensor(CoordinatorEntity[NetworkSerialPortCoordinator], SensorEntity):
+class NetworkSerialPortSensor(
+    CoordinatorEntity[NetworkSerialPortCoordinator], SensorEntity
+):
     _attr_has_entity_name = True
 
     def __init__(
@@ -51,15 +58,13 @@ class NetworkSerialPortSensor(CoordinatorEntity[NetworkSerialPortCoordinator], S
         super().__init__(coordinator)
         self.coordinator: NetworkSerialPortCoordinator
 
-        self.entity_description: NetworkSerialPortEntitySensorDescription = entity_description
+        self.entity_description: NetworkSerialPortEntitySensorDescription = (
+            entity_description
+        )
         self._attr_translation_key = self.entity_description.key
 
-        self._attr_unique_id = (
-            f"{config_entry_id}_{self.entity_description.key}"
-        )
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, config_entry_id)}
-        )
+        self._attr_unique_id = f"{config_entry_id}_{self.entity_description.key}"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, config_entry_id)})
 
     @property
     def native_value(self) -> str | None:
