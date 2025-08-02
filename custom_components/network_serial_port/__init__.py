@@ -22,7 +22,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     async def on_process_lost():
-        await hass.config_entries.async_reload(entry.entry_id)
+        if not hass.is_stopping:
+            await hass.config_entries.async_reload(entry.entry_id)
 
     network_serial_process = NetworkSerialProcess(
         NetworkSerialPortConfiguration.from_dict(dict(entry.data)),
