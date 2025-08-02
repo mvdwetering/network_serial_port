@@ -1,6 +1,5 @@
 """The Network serial port integration."""
 from __future__ import annotations
-import asyncio
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform

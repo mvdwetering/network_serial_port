@@ -13,7 +13,7 @@ from .coordinator import NetworkSerialPortCoordinator
 from .const import DOMAIN
 from .network_serial_process import NetworkSerialProcess
 
-@dataclass
+@dataclass(frozen=True, kw_only=True)
 class NetworkSerialPortEntityBinarySensorDescription(BinarySensorEntityDescription):
     is_on: Callable[[NetworkSerialProcess], bool] = None  # type: ignore[assignment]
 
@@ -38,7 +38,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities(entities)
 
 
-class NetworkSerialPortBinarySensor(CoordinatorEntity, BinarySensorEntity):
+class NetworkSerialPortBinarySensor(CoordinatorEntity[NetworkSerialPortCoordinator], BinarySensorEntity):
     _attr_has_entity_name = True
 
     def __init__(

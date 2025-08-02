@@ -111,8 +111,7 @@ class NetworkSerialProcess:
                     return
             except ValueError:
                 LOGGER.error("ValueError, limit was reached", exc_info=True)
-            except asyncio.CancelledError as e:
-                # Cleanup when cancelling should go here
+            except asyncio.CancelledError:
                 LOGGER.debug("asyncio.CancelledError", exc_info=True)
                 return
             except Exception as e:
