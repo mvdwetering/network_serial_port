@@ -143,6 +143,7 @@ class NetworkSerialProcess:
         elif m := self._connected_regex.match(line):
             self.connected_client = m.group("client_ip")
             self._signal_connection_change()
+        # Detect exceptions in the process
         elif line.startswith("Exception in thread"):
             LOGGER.error("Exception in tcp_serial_redirect.py, stopping process")
             self._process.terminate()
