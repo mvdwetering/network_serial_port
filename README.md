@@ -10,7 +10,9 @@ Note that this integration just starts the `tcp_serial_redirect.py` example scri
 
 ## Future?
 
-Some possible useful future additions. Just to manage expectations, this is just a list, I will probably not implement these any time soon if at all.
+Some possible useful future additions. 
+
+> Just to manage expectations, this is just a list, I will probably not implement these any time soon if at all.
 
 * Make more settings available in config flow, e.g. byte size, parity, flow control etc...
 * Make settings configurable through integration options. E.g. port number
