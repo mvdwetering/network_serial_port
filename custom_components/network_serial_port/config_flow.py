@@ -9,7 +9,7 @@ import voluptuous as vol  # type: ignore
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResult
+from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.exceptions import HomeAssistantError
 
 from custom_components.network_serial_port.network_serial_process import NetworkSerialPortConfiguration, NetworkSerialProcess
@@ -34,9 +34,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     # validate the data can be used to set up a connection.
 
     network_serial_process = NetworkSerialProcess(NetworkSerialPortConfiguration.from_dict(data))
-    await network_serial_process.start()
-    await asyncio.sleep(2)
-    if not network_serial_process.is_running:
+    if not await network_serial_process.start():
         raise CannotConnect
     await network_serial_process.stop()
 
@@ -51,7 +49,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
         errors: dict[str, str] = {}
         if user_input is not None:

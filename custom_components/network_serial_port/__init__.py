@@ -11,7 +11,7 @@ from homeassistant.helpers import device_registry
 from .coordinator import NetworkSerialPortCoordinator
 from .network_serial_process import NetworkSerialPortConfiguration, NetworkSerialProcess
 
-from .const import CONF_BAUDRATE, CONF_SERIAL_URL, CONF_TCP_PORT, DOMAIN
+from .const import DOMAIN
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR]
 
@@ -22,23 +22,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data.setdefault(DOMAIN, {})
 
-    network_serial_process = NetworkSerialProcess(NetworkSerialPortConfiguration.from_dict(entry.data))
-    await network_serial_process.start()
-    await asyncio.sleep(2)
-    if not network_serial_process.is_running:
-        raise ConfigEntryNotReady
-
-    coordinator = NetworkSerialPortCoordinator(hass, network_serial_process)
-
-    def on_connection_change():
-        coordinator.async_set_updated_data(network_serial_process)
-
     async def on_process_lost():
         await hass.config_entries.async_reload(entry.entry_id)
 
-    network_serial_process.on_connection_change = on_connection_change
-    network_serial_process.on_process_lost = on_process_lost
+    network_serial_process = NetworkSerialProcess(NetworkSerialPortConfiguration.from_dict(dict(entry.data)), on_process_lost=on_process_lost)
 
+    if not await network_serial_process.start():
+        raise ConfigEntryNotReady
+
+    coordinator = NetworkSerialPortCoordinator(hass, network_serial_process)
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
     # Explictly add service, so entities can link up with just the identifiers
@@ -50,9 +42,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry_type=device_registry.DeviceEntryType.SERVICE,
     )
 
-
-
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    def on_connection_change():
+        coordinator.async_set_updated_data(network_serial_process)
+
+    network_serial_process.on_connection_change = on_connection_change
 
     return True
 

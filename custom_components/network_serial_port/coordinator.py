@@ -7,7 +7,7 @@ from homeassistant.helpers.update_coordinator import (
 from .const import LOGGER
 from .network_serial_process import NetworkSerialProcess
 
-class NetworkSerialPortCoordinator(DataUpdateCoordinator):
+class NetworkSerialPortCoordinator(DataUpdateCoordinator[NetworkSerialProcess]):
     """My custom coordinator."""
 
     def __init__(self, hass, api: NetworkSerialProcess):
