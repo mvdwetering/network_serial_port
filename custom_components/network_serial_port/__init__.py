@@ -31,7 +31,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     if not await network_serial_process.start():
-        raise ConfigEntryNotReady
+        raise ConfigEntryNotReady(
+            translation_domain=DOMAIN,
+            translation_key="failed_to_start_process"
+        )
 
     coordinator = NetworkSerialPortCoordinator(hass, network_serial_process)
     hass.data[DOMAIN][entry.entry_id] = coordinator

@@ -129,7 +129,7 @@ class NetworkSerialProcess:
 
         # Checks related to process start
         if line.startswith("Could not open serial port"):
-            LOGGER.error("Could not open serial port, check your configuration")
+            LOGGER.error("Could not open serial port, check your configuration and if the port is available.")
             self._start_success = False
             self._started_event.set()
         elif line.startswith("Waiting for connection on"):

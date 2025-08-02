@@ -18,6 +18,11 @@
       "already_configured": "Device is already configured"
     }
   },
+  "exceptions": {
+      "failed_to_start_process": {
+          "message": "Failed to start serial port process, make sure serial port is correct and available."
+      }
+  },    
   "entity": {
     "binary_sensor": {
       "client_connected": {
